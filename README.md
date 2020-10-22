@@ -1,4 +1,4 @@
-# ansible-bault
+# ansible-vault
 
 Ansible role to deploy and initialize Hashicorp Vault machine or cluster.
 It's a fork of [ansible-vault](https://github.com/ansible-community/ansible-vault) in order to refactor it, use Raft integrated storage as default

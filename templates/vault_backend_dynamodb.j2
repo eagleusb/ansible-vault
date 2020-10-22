@@ -5,7 +5,7 @@ backend "dynamodb" {
 {% if vault_dynamodb_table is string and vault_dynamodb_table|length %}
     table =          "{{ vault_dynamodb_table }}"
 {% endif %}
-{% if vault_dynamodb_ha_enabled | bool %}
+{% if vault_dynamodb_ha_enabled | bool() %}
     ha_enabled =     "{{ vault_dynamodb_ha_enabled }}"
 {% endif %}
 {% if vault_dynamodb_max_parallel is string and vault_dynamodb_max_parallel|length %}
@@ -30,4 +30,3 @@ backend "dynamodb" {
     session_token =  "{{ vault_dynamodb_session_token }}"
 {% endif %}
 }
-

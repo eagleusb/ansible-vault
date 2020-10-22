@@ -8,7 +8,7 @@
       group:
         name: "{{ vault_group }}"
         state: present
-      when: vault_manage_group | bool
+      when: vault_manage_group | bool()
 
     - name: "vault | add vault user"
       user:
@@ -17,7 +17,7 @@
         group: "{{ vault_group }}"
         groups: "{{ vault_groups }}"
         system: true
-      when: vault_manage_user | bool
+      when: vault_manage_user | bool()
   become: true
 
 - name: "vault | include os-specific variables"
@@ -61,34 +61,34 @@
 - name: "vault | vault enterprise installation (local)"
   include_tasks: "install_enterprise.yml"
   when:
-    - vault_enterprise | bool
-    - not vault_install_remotely | bool
-    - not vault_install_remote_repo | bool
-    - installation_required | bool
+    - vault_enterprise | bool()
+    - not vault_install_remotely | bool()
+    - not vault_install_remote_repo | bool()
+    - installation_required | bool()
 
 - name: "vault | vault installation (local)"
   include_tasks: "install.yml"
   when:
-    - not vault_enterprise | bool
-    - not vault_install_remotely | bool
-    - not vault_install_hashi_repo | bool
-    - installation_required | bool
+    - not vault_enterprise | bool()
+    - not vault_install_remotely | bool()
+    - not vault_install_hashi_repo | bool()
+    - installation_required | bool()
 
 - name: "vault | vault installation (repository)"
   include_tasks: "install_hashi_repo.yml"
   when:
-    - not vault_enterprise | bool
-    - not vault_install_remotely | bool
-    - vault_install_hashi_repo | bool
-    - installation_required | bool
+    - not vault_enterprise | bool()
+    - not vault_install_remotely | bool()
+    - vault_install_hashi_repo | bool()
+    - installation_required | bool()
 
 - name: "vault | vault installation (remotely)"
   include_tasks: "install_remote.yml"
   when:
-    - not vault_enterprise | bool
-    - vault_install_remotely | bool
-    - not vault_install_hashi_repo | bool
-    - installation_required | bool
+    - not vault_enterprise | bool()
+    - vault_install_remotely | bool()
+    - not vault_install_hashi_repo | bool()
+    - installation_required | bool()
 
 - name: "vault | check vault mlock capability"
   become: true
@@ -124,7 +124,7 @@
     owner: "root"
     group: "root"
     mode: 0644
-  when: "vault_enable_logrotate | bool"
+  when: "vault_enable_logrotate | bool()"
 
 - name: "vault | include tls configuration"
   include_tasks: "tls.yml"
@@ -142,7 +142,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0600
-  when: "vault_gkms | bool"
+  when: "vault_gkms | bool()"
 
 - name: "vault | main configuration template"
   become: true
@@ -255,19 +255,19 @@
     create: true
     mode: 0644
   when:
-    - "not vault_tls_disable | bool"
+    - "not vault_tls_disable | bool()"
     - "ansible_os_family != 'Windows'"
 
 - name: Initialize Vault
   include_tasks: "init.yml"
-  when: "vault_init | bool()"
+  when: "vault_init | bool()()"
 
 - name: "vault | check vault api status"
   vars:
     vault_addr_protocol: "{{ vault_tls_disable | ternary('http', 'https') }}"
     vault_addr: "{{ (vault_address == '0.0.0.0') | ternary('127.0.0.1', vault_address) }}"
   uri:
-    validate_certs: "{{ validate_certs_during_api_reachable_check | bool }}"
+    validate_certs: "{{ validate_certs_during_api_reachable_check | bool() }}"
     url: "{{ vault_addr_protocol }}://{{ vault_hostname | default(vault_addr, true) }}:{{ vault_port }}/v1/sys/health"
     method: GET
     # 200 if initialized, unsealed, and active

@@ -44,7 +44,7 @@
     timeout: 42
   become: false
   run_once: true
-  when: "not vault_package.stat.exists | bool"
+  when: "not vault_package.stat.exists | bool()"
   delegate_to: "localhost"
 
 - name: "vault enterprise | unzip {{ role_path }}/files/{{ vault_enterprise_pkg }} (local)"

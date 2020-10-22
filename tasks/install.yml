@@ -29,7 +29,7 @@
     dest: "{{ role_path }}/files/{{ vault_shasums }}"
   become: false
   run_once: true
-  when: "not vault_checksum.stat.exists | bool"
+  when: "not vault_checksum.stat.exists | bool()"
   delegate_to: "localhost"
 
 - name: "vault | get vault package checksum (local)"
@@ -62,7 +62,7 @@
     timeout: 42
   become: false
   run_once: true
-  when: "not vault_package.stat.exists | bool"
+  when: "not vault_package.stat.exists | bool()"
   delegate_to: "localhost"
 
 - name: "vault | unarchive vault (local)"

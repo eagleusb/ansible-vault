@@ -1,5 +1,4 @@
 ---
-# File: vars/Debian.yml - Debian vars for Vault
 
 vault_os_packages:
   - git

@@ -1,6 +1,7 @@
 ---
-# handlers file for vault
 
-- name: Restart vault
+- name: "restart vault"
   become: true
-  service: name='{{ vault_systemd_service_name }}' state=restarted
+  service:
+    name: "{{ vault_systemd_service_name }}"
+    state: "restarted"

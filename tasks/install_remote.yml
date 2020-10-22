@@ -56,7 +56,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: "0755"
-  notify: Restart vault
+  notify: "restart vault"
   tags: installation
 
 - name: Cleanup

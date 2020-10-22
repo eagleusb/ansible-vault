@@ -1,5 +1,4 @@
 ---
-# File: tasks/main.yml - Main tasks for Vault
 
 - name: Include asserts
   include: asserts.yml
@@ -149,7 +148,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: "0400"
-  notify: Restart vault
+  notify: "restart vault"
 
 - name: "Set Exec output to log path when enabled log"
   set_fact:

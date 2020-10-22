@@ -5,3 +5,8 @@
   service:
     name: "{{ vault_systemd_service_name }}"
     state: "restarted"
+
+- name: "daemon-reload systemd"
+  become: true
+  systemd:
+    daemon-reload: true

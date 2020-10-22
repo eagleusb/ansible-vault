@@ -1,17 +1,16 @@
 ---
-# File: tasks/tls.yml - TLS tasks for Vault
 
-- name: Create TLS directory
+- name: "vault | create tls directory"
   become: true
   file:
     dest: "{{ item }}"
     state: directory
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
-  with_items:
+  loop:
     - "{{ vault_tls_config_path }}"
 
-- name: Vault SSL Certificate and Key
+- name: "vault | vault ssl certificate and key"
   become: true
   copy:
     remote_src: "{{ vault_tls_files_remote_src }}"
@@ -20,7 +19,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: "{{ item.mode }}"
-  with_items:
+  loop:
     - src: "{{ vault_tls_src_files }}/{{ vault_tls_cert_file }}"
       dest: "{{ vault_tls_config_path }}/{{ vault_tls_cert_file }}"
       mode: "0644"
@@ -30,4 +29,4 @@
     - src: "{{ vault_tls_src_files }}/{{ vault_tls_ca_file }}"
       dest: "{{ vault_tls_config_path }}/{{ vault_tls_ca_file }}"
       mode: "0644"
-  when: vault_tls_copy_keys | bool
+  when: "vault_tls_copy_keys | bool"

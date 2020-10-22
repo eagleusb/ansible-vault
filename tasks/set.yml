@@ -1,0 +1,9 @@
+---
+
+- name: "skeleton | set fact"
+  set_fact:
+    some_var:
+      "{{
+        'yes' if inventory_hostname in groups['my_hosts']
+        else 'no'
+      }}"

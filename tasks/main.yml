@@ -1,0 +1,15 @@
+---
+
+- name: "skeleton | install skeleton requirements"
+  include_tasks: "repo-{{ ansible_os_family | lower() }}.yml"
+  when: "'foo' == 'bar'"
+  tags:
+    - "skeleton-repository"
+    - "skeleton-install"
+
+- name: "skeleton | configure skeleton"
+  include_tasks: "configure.yml"
+  when: "'foo' == 'bar'"
+  tags:
+    - "skeleton-configure"
+    - "skeleton-install"

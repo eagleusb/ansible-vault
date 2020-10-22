@@ -1,0 +1,10 @@
+---
+
+- name: "skeleton | add and enable skeleton repository"
+  yum_repository:
+    name: "skeleton"
+    description: "skeleton repository"
+    baseurl: "{{ skeleton_repository.baseurl }}/centos/7"
+    gpgkey: "{{ skeleton_repository.gpg }}"
+    gpgcheck: true
+    enabled: true

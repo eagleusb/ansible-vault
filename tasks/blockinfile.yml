@@ -1,0 +1,14 @@
+---
+
+- name: "skeleton | text block"
+  blockinfile:
+    block: |
+      Explanation: Prefer GitLab provided packages over the Debian native ones
+      Package: "{{ package_name }}"
+      Pin: origin packages.gitlab.com
+      Pin-Priority: 1001
+    path: "/etc/apt/preferences.d/pin-gitlab-runner.pref"
+    create: yes
+    mode: 0644
+    owner: root
+    group: root

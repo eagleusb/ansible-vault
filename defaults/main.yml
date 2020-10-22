@@ -1,0 +1,14 @@
+---
+# type: dict
+# descr: skeleton baz
+skeleton_baz:
+  one: "https://"
+  two: "https://"
+
+# type: string
+# descr: skeleton bar
+skeleton_bar: 5
+
+# type: list
+# descr: list of dict, skeleton bazbaz
+skeleton_bazbaz: []

@@ -1,0 +1,3 @@
+{% set apiVersion = foo.bar.api_version %}
+{% set apiAddress = foo.bar.advertise_address | mandatory () %}
+{% set apiPort = foo.bar.bind_port | default('6443') %}

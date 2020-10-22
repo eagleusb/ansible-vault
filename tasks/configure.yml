@@ -1,0 +1,19 @@
+---
+
+- name: "skeleton | write main configuration"
+  template:
+    src: "etc/skeleton.conf.j2"
+    dest: "/etc/skeleton.conf"
+    mode: 0644
+  notify: "enable and start __ service"
+
+- name: "fluentbit | write inputs configuration"
+  template:
+    src: "etc/skeleton/{{ config.name }}.conf.j2"
+    dest: "/etc/skeleton/{{ config.name }}.conf"
+    mode: 0644
+  loop: "{{ skeleton_bazbaz }}"
+  loop_control:
+    loop_var: config
+  when: skeleton_bazbaz | length() > 0
+  notify: "restart __ service"

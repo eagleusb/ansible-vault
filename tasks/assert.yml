@@ -1,0 +1,17 @@
+---
+
+- name: "skeleton | check if required variables are defined"
+  fail:
+    msg: "variable {{ item }} is not defined"
+  when:
+    - item not in vars
+    - ansible_virtualization_type != "docker"
+  with_items: "{{ required_vars }}"
+  tags: always
+
+- name: "skeleton | ensure list is valid and odd"
+  assert:
+    msg: "list isn't an array or odd : {{ list }}"
+    that:
+      - list is sequence()
+      - (list | length()) is odd()

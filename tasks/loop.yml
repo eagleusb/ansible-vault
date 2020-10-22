@@ -1,0 +1,15 @@
+---
+
+- name: "skeleton | create directories"
+  file:
+    path: "{{ _directory }}"
+    state: directory
+    recurse: yes
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - "/var/lib/foo"
+    - "/var/lib/foo/scripts"
+  loop_control:
+    loop_var: _directory

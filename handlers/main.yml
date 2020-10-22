@@ -1,0 +1,22 @@
+---
+- name: "start __ service"
+  service:
+    name: "__"
+    state: started
+  listen: "enable and start __ service"
+
+- name: "restart __ service"
+  service:
+    name: "__"
+    state: restarted
+
+- name: "reload __ service"
+  service:
+    name: "__"
+    state: reloaded
+
+- name: "enable __ service"
+  service:
+    name: "__"
+    enabled: true
+  listen: "enable and start __ service"

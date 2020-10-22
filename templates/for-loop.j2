@@ -1,0 +1,8 @@
+{{ ansible_managed | comment }}
+
+{% if some_list is sequence() and some_list | length() > 0 %}
+foo:
+{% for item in some_list %}
+  - {{ item }}
+{% endfor %}
+{% endif %}

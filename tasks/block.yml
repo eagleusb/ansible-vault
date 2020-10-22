@@ -1,0 +1,25 @@
+---
+
+- block:
+    - name: "skeleton | drop files"
+      file:
+        path: "/etc/path/{{ item }}"
+        state: absent
+      loop:
+        - "foofile"
+        - "BARFILE"
+    - name: "skeleton | configure foo.cfg.d"
+      template:
+        src: "etc/foo.cfg.d/{{ item.filename }}.j2"
+        dest: "/etc/foo.cfg.d/{{ item.priority }}_{{ item.filename }}"
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+        trim_blocks: yes
+      loop:
+        - { filename: "none.cfg", priority: "10" }
+        - { filename: "null.cfg", priority: "10" }
+        - { filename: "foo.cfg", priority: "20" }
+        - { filename: "bar.cfg", priority: "30" }
+  when: True

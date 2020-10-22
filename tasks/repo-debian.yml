@@ -1,0 +1,25 @@
+---
+
+- name: "skeleton | add skeleton requirements"
+  package:
+    name: "apt-transport-https"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "skeleton | add skeleton repository gpg key"
+  apt_key:
+    url: "{{ skeleton_baz.gpg }}"
+    state: present
+
+# yamllint disable rule:line-length
+- name: "skeleton | add and enable skeleton repository"
+  apt_repository:
+    repo: >-
+      deb
+      {{ skeleton_repository.baseurl }}/{{ ansible_distribution | lower() }}/{{ ansible_distribution_release }}
+      {{ ansible_distribution_release }}
+      main
+    state: present
+    filename: skeleton
+    update_cache: true

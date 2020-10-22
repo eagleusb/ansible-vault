@@ -1,0 +1,16 @@
+---
+
+- name: "skeleton | capturing binary status"
+  shell: |
+    set -o pipefail
+    binary status | cut -f2 -d':'
+  args:
+    executable: "/bin/bash"
+    creates: "/etc/some/file.yaml"
+  environment:
+    SUPERSECRET_TOKEN: "{{ secret_token }}"
+  register: _binary_status
+
+- name: "skeleton | displaying binary status"
+  debug:
+    var: _binary_status['stdout']

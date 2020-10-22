@@ -1,14 +1,11 @@
 ---
 galaxy_info:
-  role_name: skeleton
-  author: eagleusb
+  role_name: vault
+  author: eagleusb, Brian Shumate
   description: "Ansible role skeleton"
-  license: "license (GPLv3)"
+  license: "license (BSD)"
   min_ansible_version: 2.9
   platforms:
-    - name: EL
-      versions:
-        - 7
     - name: Ubuntu
       versions:
         - all
@@ -16,7 +13,8 @@ galaxy_info:
       versions:
         - all
   galaxy_tags:
-    - ansible
-    - role
+    - hashicorp
+    - vault
+    - security
 
 dependencies: []

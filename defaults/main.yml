@@ -1,6 +1,6 @@
 ---
 # descr: version and installation binary
-vault_version: "{{ lookup('env','VAULT_VERSION') | default('1.4.0', true) }}{{'+prem' if vault_enterprise_premium else '' }}{{'.hsm' if vault_enterprise_premium_hsm else '' }}"
+vault_version: "{{ lookup('env','VAULT_VERSION') | default('1.5.5', true) }}{{'+prem' if vault_enterprise_premium else '' }}{{'.hsm' if vault_enterprise_premium_hsm else '' }}"
 vault_architecture_map:
   amd64: "amd64"
   x86_64: "amd64"

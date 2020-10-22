@@ -6,7 +6,7 @@ backend "consul" {
   token = "{{ vault_consul_token }}"
   {% endif %}
   scheme = "{{ vault_consul_scheme }}"
-  {% if vault_tls_gossip | bool %}
+  {% if vault_tls_gossip | bool() %}
   tls_cert_file = "{{ vault_backend_tls_config_path }}/{{ vault_backend_tls_cert_file }}"
   tls_key_file = "{{ vault_backend_tls_config_path }}/{{ vault_backend_tls_key_file }}"
   tls_ca_file="{{ vault_backend_tls_config_path }}/{{ vault_backend_tls_ca_file }}"

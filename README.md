@@ -1,10 +1,12 @@
-# ansible-skeleton
+# ansible-bault
 
-Ansible role skeleton for Ansible Galaxy init function
+Ansible role to deploy and initialize Hashicorp Vault machine or cluster.
+It's a fork of [ansible-vault](https://github.com/ansible-community/ansible-vault) in order to refactor it, use Raft integrated storage as default
+and support initialization.
 
 ![ansible-version](https://img.shields.io/badge/ansible-v2.9+-green.svg)
-![last-commit](https://img.shields.io/github/last-commit/eagleusb/ansible-skeleton)
-![license](https://img.shields.io/github/license/eagleusb/ansible-skeleton)
+![last-commit](https://img.shields.io/github/last-commit/eagleusb/ansible-vault)
+![license](https://img.shields.io/github/license/eagleusb/ansible-vault)
 
 ## Requirements
 
@@ -13,10 +15,7 @@ None
 ## Quickstart
 
 ```sh
-ansible-galaxy install eagleusb.skeleton
-ansible-galaxy init --role-skeleton ~/.ansible/roles/eagleusb.skeleton ansible-therole
-...
-- Role ansible-therole was created successfully
+ansible-galaxy install eagleusb.vault
 ```
 
 ## Variables
@@ -37,4 +36,4 @@ ansible-galaxy init --role-skeleton ~/.ansible/roles/eagleusb.skeleton ansible-t
 
 ## License
 
-[GNU GENERAL PUBLIC LICENSE Version 3](./LICENSE)
+[BSD](./LICENSE.txt)

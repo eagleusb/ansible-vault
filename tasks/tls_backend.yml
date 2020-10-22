@@ -1,17 +1,17 @@
 ---
-# File: tasks/backend_tls.yml - Backend TLS tasks for Vault
 
-- name: Create backend TLS directory
+- name: "vault | create backend tls directory"
   become: true
   file:
     dest: "{{ item }}"
     state: directory
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
-  with_items:
+    mode: 0755
+  loop:
     - "{{ vault_backend_tls_config_path }}"
 
-- name: Vault backend SSL Certificate and Key
+- name: "vault | vault backend ssl certificate and key"
   become: true
   copy:
     remote_src: "{{ vault_tls_files_remote_src }}"
@@ -20,7 +20,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: "{{ item.mode }}"
-  with_items:
+  loop:
     - src: "{{ vault_backend_tls_src_files }}/{{ vault_backend_tls_cert_file }}"
       dest: "{{ vault_backend_tls_config_path }}/{{ vault_backend_tls_cert_file }}"
       mode: "0644"
@@ -30,4 +30,4 @@
     - src: "{{ vault_backend_tls_src_files }}/{{ vault_backend_tls_ca_file }}"
       dest: "{{ vault_backend_tls_config_path }}/{{ vault_backend_tls_ca_file }}"
       mode: "0644"
-  when: vault_tls_copy_keys | bool
+  when: "vault_tls_copy_keys | bool()"

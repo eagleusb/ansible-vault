@@ -1,104 +1,95 @@
 ---
-# File: tasks/install.yml - package installation tasks for vault
 
-- name: OS packages
+- name: "vault | os packages"
   become: true
   package:
-    name: "{{ item }}"
-    state: present
-  with_items: "{{ vault_os_packages }}"
-  tags: installation
+    name: "{{ vault_os_packages }}"
+    state: "present"
 
-# Temporary place for one-off version diff packages, etc.
-- name: OS packages diff (Debian 9)
+- name: "vault | os packages diff (debian 9+)"
   package:
     name: "libcap2-bin"
     state: present
-  tags: installation
   when:
-    - ansible_distribution == "Debian"
+    - ansible_distribution == 'Debian'
     - (ansible_distribution_version == 'buster/sid') or (ansible_distribution_version is version(8.5, '>'))
 
-- name: Check Vault package checksum file (local)
+# TODO: use block
+- name: "vault | check vault package checksum file (local)"
   stat:
     path: "{{ role_path }}/files/{{ vault_shasums }}"
   become: false
   run_once: true
-  register: vault_checksum
-  delegate_to: 127.0.0.1
+  register: "vault_checksum"
+  delegate_to: "localhost"
 
-- name: Get Vault package checksum file (local)
+- name: "vault | get vault package checksum file (local)"
   get_url:
     url: "{{ vault_checksum_file_url }}"
     dest: "{{ role_path }}/files/{{ vault_shasums }}"
   become: false
   run_once: true
-  tags: installation
-  when: not vault_checksum.stat.exists | bool
-  delegate_to: 127.0.0.1
+  when: "not vault_checksum.stat.exists | bool()"
+  delegate_to: "localhost"
 
-- name: Get Vault package checksum (local)
+- name: "vault | get vault package checksum (local)"
   shell: |
     set -o pipefail
     grep "{{ vault_pkg }}" "{{ role_path }}/files/{{ vault_shasums }}" | \
     awk '{print $1}'
   args:
-    executable: /bin/bash
+    executable: "/bin/bash"
   become: false
   run_once: true
-  register: vault_sha256
-  tags:
-    - installation
-    - skip_ansible_lint
-  delegate_to: 127.0.0.1
+  register: "vault_sha256"
+  tags: "skip_ansible_lint"
+  delegate_to: "localhost"
 
-- name: Check Vault package file (local)
+- name: "vault | check vault package file (local)"
   stat:
     path: "{{ role_path }}/files/{{ vault_pkg }}"
   become: false
   run_once: true
-  register: vault_package
-  delegate_to: 127.0.0.1
+  register: "vault_package"
+  delegate_to: "localhost"
 
-- name: "Download Vault (local) → {{ vault_zip_url }}"
+# TODO: use unarchive
+- name: "vault | download vault (local) → {{ vault_zip_url }}"
   get_url:
     url: "{{ vault_zip_url }}"
     dest: "{{ role_path }}/files/{{ vault_pkg }}"
     checksum: "sha256:{{ vault_sha256.stdout }}"
-    timeout: "42"
+    timeout: 42
   become: false
   run_once: true
-  tags: installation
-  when: not vault_package.stat.exists | bool
-  delegate_to: 127.0.0.1
+  when: "not vault_package.stat.exists | bool()"
+  delegate_to: "localhost"
 
-- name: Unarchive Vault (local)
+- name: "vault | unarchive vault (local)"
   unarchive:
     src: "{{ role_path }}/files/{{ vault_pkg }}"
     dest: "{{ role_path }}/files/"
     creates: "{{ role_path }}/files/vault"
+    mode: 0755
   become: false
   run_once: true
-  tags: installation
-  delegate_to: 127.0.0.1
+  delegate_to: "localhost"
 
-- name: Install Vault
+- name: "vault | install vault"
   become: true
   copy:
     src: "{{ role_path }}/files/vault"
     dest: "{{ vault_bin_path }}"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
-    mode: "0755"
-  notify: Restart vault
-  tags: installation
+    mode: 0755
+  notify: "restart vault"
 
-- name: Cleanup (local)
+- name: "vault | cleanup (local)"
   file:
     path: "{{ item }}"
     state: "absent"
   become: false
   with_fileglob: "{{ role_path }}/files/vault"
   run_once: true
-  tags: installation
-  delegate_to: 127.0.0.1
+  delegate_to: "localhost"

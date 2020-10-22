@@ -11,7 +11,7 @@ plugin_directory = "{{ vault_plugin_path }}"
 listener "tcp" {
   address = "{{ vault_address }}:{{ vault_port }}"
   cluster_address = "{{ vault_cluster_address }}"
-  {% if not (vault_tls_disable | bool) -%}
+  {% if not (vault_tls_disable | bool()) -%}
   tls_cert_file = "{{ vault_tls_config_path }}/{{ vault_tls_cert_file }}"
   tls_key_file = "{{ vault_tls_config_path }}/{{ vault_tls_key_file }}"
   tls_client_ca_file="{{ vault_tls_config_path }}/{{ vault_tls_ca_file }}"
@@ -20,14 +20,14 @@ listener "tcp" {
   tls_cipher_suites = "{{ vault_tls_cipher_suites}}"
   {% endif -%}
   tls_prefer_server_cipher_suites = "{{ vault_tls_prefer_server_cipher_suites }}"
-  {% if (vault_tls_require_and_verify_client_cert | bool) -%}
-  tls_require_and_verify_client_cert = "{{ vault_tls_require_and_verify_client_cert | bool | lower}}"
+  {% if (vault_tls_require_and_verify_client_cert | bool()) -%}
+  tls_require_and_verify_client_cert = "{{ vault_tls_require_and_verify_client_cert | bool() | lower()}}"
   {% endif -%}
-  {% if (vault_tls_disable_client_certs | bool) -%}
-  tls_disable_client_certs = "{{ vault_tls_disable_client_certs | bool | lower}}"
+  {% if (vault_tls_disable_client_certs | bool()) -%}
+  tls_disable_client_certs = "{{ vault_tls_disable_client_certs | bool() | lower()}}"
   {% endif -%}
   {% endif -%}
-  tls_disable = "{{ vault_tls_disable | bool | lower }}"
+  tls_disable = "{{ vault_tls_disable | bool() | lower() }}"
 }
 
 {#
@@ -58,26 +58,26 @@ listener "tcp" {
 {% endif %}
 
 {% if vault_ui -%}
-ui = {{ vault_ui | bool | lower }}
+ui = {{ vault_ui | bool() | lower() }}
 {% endif %}
 
-{% if vault_enterprise_premium_hsm | bool -%}
+{% if vault_enterprise_premium_hsm | bool() -%}
   {% include vault_backend_seal with context %}
 {% endif %}
 
-{% if vault_gkms | bool -%}
+{% if vault_gkms | bool() -%}
   {% include vault_backend_gkms with context %}
 {% endif %}
 
-{% if vault_awskms | bool -%}
+{% if vault_awskms | bool() -%}
   {% include vault_awskms_backend with context %}
 {% endif %}
 
-{% if vault_azurekeyvault | bool -%}
+{% if vault_azurekeyvault | bool() -%}
   {% include vault_azurekeyvault_backend with context %}
 {% endif %}
 
-{% if vault_telemetry_enabled | bool -%}
+{% if vault_telemetry_enabled | bool() -%}
 telemetry {
   {% if vault_statsite_address is defined %}
   statsite_address = "{{vault_statsite_address}}"
@@ -89,7 +89,7 @@ telemetry {
   prometheus_retention_time = "{{ vault_prometheus_retention_time }}"
   {% endif -%}
   {% if vault_telemetry_disable_hostname is defined %}
-  disable_hostname = {{vault_telemetry_disable_hostname | bool | lower }}
+  disable_hostname = {{vault_telemetry_disable_hostname | bool() | lower() }}
   {% endif -%}
 }
 {% endif -%}

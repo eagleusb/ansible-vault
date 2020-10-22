@@ -1,6 +1,6 @@
 seal "pkcs11" {
 
-  lib = "{{ vault_seal_lib | bool }}"
+  lib = "{{ vault_seal_lib | bool() }}"
 {% if vault_softcard_enable -%}
 	token_label	= "{{ vault_seal_token_label }}"
 {% else -%}

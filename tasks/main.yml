@@ -109,6 +109,7 @@
     state: "directory"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
+    mode: 0644
   loop:
     - "{{ vault_config_path }}"
     - "{{ vault_plugin_path }}"
@@ -244,6 +245,7 @@
     path: "{{ vault_home }}/.bashrc"
     line: "export VAULT_ADDR='{{ vault_tls_disable | ternary('http', 'https') }}://{{ vault_address }}:{{ vault_port }}'"
     create: true
+    mode: 0644
   when: "ansible_os_family != 'Windows'"
 
 - name: "vault | add vault_cacert environment variable in bashrc"
@@ -251,6 +253,7 @@
     path: "{{ vault_home }}/.bashrc"
     line: "export VAULT_CACERT={{ vault_tls_config_path }}/{{ vault_tls_ca_file }}"
     create: true
+    mode: 0644
   when:
     - "not vault_tls_disable | bool"
     - "ansible_os_family != 'Windows'"

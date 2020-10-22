@@ -20,6 +20,7 @@
         executable: "/bin/bash"
       register: "is_vault_initialized"
       failed_when: "is_vault_initialized.rc == 1"
+      tags: "skip_ansible_lint"
 
     - name: "vault | initialize vault"
       shell:
@@ -32,8 +33,10 @@
         executable: "/bin/bash"
       register: "vault_init"
       when: "is_vault_initialized.rc == 2"
+      tags: "skip_ansible_lint"
 
-    - set_fact:
+    - name: "vault | initialization outputs in-memory"
+      set_fact:
         vault_init_outputs: "{{ vault_init.stdout }}"
       when: "is_vault_initialized.rc == 2"
   run_once: true
@@ -42,7 +45,8 @@
   delegate_to: "{{ vault_first_server | mandatory() }}"
 
 - block:
-    - tempfile:
+    - name: "vault | create temporary secret directory (local)"
+      tempfile:
         state: directory
         prefix: "vault-init-outputs-"
       register: vault_init_backup
@@ -51,6 +55,8 @@
       copy:
         dest: "{{ vault_init_backup.path }}/output.json"
         content: "{{ vault_init_outputs | from_json() }}"
+        mode: 0400
   when: "vault_init_outputs is defined and vault_init_outputs"
   become: no
   delegate_to: localhost
+  no_log: true

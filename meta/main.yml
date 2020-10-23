@@ -2,7 +2,7 @@
 galaxy_info:
   role_name: vault
   author: eagleusb, Brian Shumate
-  description: "Ansible role skeleton"
+  description: "Ansible role to deploy, configure and init HashiCorp Vault"
   license: "license (BSD)"
   min_ansible_version: 2.9
   platforms:

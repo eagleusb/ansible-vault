@@ -1,19 +1,5 @@
 ---
 
-- name: "vault | os packages"
-  become: true
-  package:
-    name: "{{ vault_os_packages }}"
-    state: "present"
-
-- name: "vault | os packages diff (debian 9+)"
-  package:
-    name: "libcap2-bin"
-    state: present
-  when:
-    - ansible_distribution == 'Debian'
-    - (ansible_distribution_version == 'buster/sid') or (ansible_distribution_version is version(8.5, '>'))
-
 # TODO: use block
 - name: "vault | check vault package checksum file (local)"
   stat:
@@ -54,7 +40,6 @@
   register: "vault_package"
   delegate_to: "localhost"
 
-# TODO: use unarchive
 - name: "vault | download vault (local) → {{ vault_zip_url }}"
   get_url:
     url: "{{ vault_zip_url }}"

@@ -1,59 +1,42 @@
 ---
 
-- name: "vault | os packages"
-  package:
-    name: "{{ vault_os_packages }}"
-    state: present
-
 - name: "vault | ensure remote vault dir exists"
-  file:
-    path: "/tmp/vault"
+  tempfile:
+    prefix: "vault-install-"
     state: "directory"
-    mode: 0755
+  register: "vault_install_path"
 
-- name: "vault | check vault package checksum file"
-  stat:
-    path: "/tmp/vault/{{ vault_shasums }}"
-  register: "vault_checksum"
-
-- name: "vault | get vault package checksum file"
+- name: "vault | get vault package checksums file"
   get_url:
     url: "{{ vault_checksum_file_url }}"
-    dest: "/tmp/vault/{{ vault_shasums }}"
+    dest: "{{ vault_install_path.path }}/{{ vault_shasums }}"
+    force: true
     mode: 0600
-  when: "not vault_checksum.stat.exists | bool()"
 
 - name: "vault | get vault package checksum"
-  shell: "grep {{ vault_pkg }} /tmp/vault/{{ vault_shasums }}"
+  shell: "grep {{ vault_pkg }} {{ vault_install_path.path }}/{{ vault_shasums }}"
   register: "vault_sha256"
   tags: skip_ansible_lint
 
-- name: "vault | check vault package file"
-  stat:
-    path: "/tmp/vault/{{ vault_pkg }}"
-  register: "vault_package"
-
-# TODO: use unarchive
 - name: "vault | download vault → {{ vault_zip_url }}"
   get_url:
     url: "{{ vault_zip_url }}"
-    dest: "/tmp/vault/{{ vault_pkg }}"
-    checksum: "sha256:{{ vault_sha256.stdout.split(' ')|first }}"
+    dest: "{{ vault_install_path.path }}/{{ vault_pkg }}"
+    checksum: "sha256:{{ vault_sha256.stdout.split(' ') | first() }}"
     timeout: 42
+    force: false
     mode: 0600
-  when: "not vault_package.stat.exists | bool()"
 
 - name: "vault | unarchive vault and install binary"
   unarchive:
-    remote_src: true
-    src: "/tmp/vault/{{ vault_pkg }}"
+    src: "{{ vault_install_path.path }}/{{ vault_pkg }}"
     dest: "{{ vault_bin_path }}"
+    remote_src: true
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0755
-  notify: "restart vault"
 
 - name: "vault | cleanup tmp installation directory"
   file:
-    path: "/tmp/vault"
+    path: "{{ vault_install_path.path }}"
     state: "absent"

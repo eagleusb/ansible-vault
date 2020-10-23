@@ -1,0 +1,10 @@
+---
+
+- name: "vault | gcp credentials for auto-unseal"
+  copy:
+    src: "{{ vault_gkms_credentials_src_file }}"
+    dest: "{{ vault_gkms_credentials }}"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0600
+  when: "vault_gkms | bool()"

@@ -1,11 +1,5 @@
 ---
 
-# TODO: refactor, manage cache
-- name: "vault | enterprise os packages"
-  package:
-    name: "{{ vault_os_packages }}"
-    state: present
-
 # TODO: use block
 - name: "vault enterprise | check {{ role_path }}/files/{{ vault_enterprise_shasums }} (local)"
   stat:

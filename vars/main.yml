@@ -1,5 +1,6 @@
 ---
 
+# see: https://www.vaultproject.io/api/system/health.html
 vault_http_status:
   200: "initialized, unsealed, and active"
   429: "unsealed and standby"

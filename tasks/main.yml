@@ -13,9 +13,9 @@
     - name: "vault | add vault user"
       user:
         name: "{{ vault_user }}"
-        comment: "vault user"
+        comment: "vault dedicated user"
         group: "{{ vault_group }}"
-        groups: "{{ vault_groups }}"
+        groups: "{{ vault_groups | default(omit) }}"
         system: true
       when: vault_manage_user | bool()
   become: true
@@ -105,17 +105,17 @@
 - name: "vault | create directories"
   become: true
   file:
-    dest: "{{ item }}"
+    dest: "{{ item.path }}"
     state: "directory"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
-    mode: 0644
+    mode: "{{ item.mode | default('0755') | int() }}"
   loop:
-    - "{{ vault_config_path }}"
-    - "{{ vault_plugin_path }}"
-    - "{{ vault_data_path }}"
-    - "{{ vault_log_path }}"
-    - "{{ vault_run_path }}"
+    - path: "{{ vault_config_path }}"
+    - path: "{{ vault_plugin_path }}"
+    - path: "{{ vault_data_path }}"
+    - path: "{{ vault_log_path }}"
+    - path: "{{ vault_run_path }}"
 
 - name: "vault | enable logrotate"
   template:
@@ -260,7 +260,7 @@
 
 - name: Initialize Vault
   include_tasks: "init.yml"
-  when: "vault_init | bool()()"
+  when: "vault_init | bool()"
 
 - name: "vault | check vault api status"
   vars:
@@ -270,13 +270,6 @@
     validate_certs: "{{ validate_certs_during_api_reachable_check | bool() }}"
     url: "{{ vault_addr_protocol }}://{{ vault_hostname | default(vault_addr, true) }}:{{ vault_port }}/v1/sys/health"
     method: GET
-    # 200 if initialized, unsealed, and active
-    # 429 if unsealed and standby
-    # 472 if data recovery mode replication secondary and active
-    # 473 if performance standby
-    # 501 if not initialized
-    # 503 if sealed
-    # See: https://www.vaultproject.io/api/system/health.html
     status_code: 200, 429, 472, 473, 501, 503
     body_format: json
   register: "check_result"

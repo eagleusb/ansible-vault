@@ -28,10 +28,10 @@ vault_run_path: "/var/run/vault"
 
 # descr: system user and group
 vault_manage_user: true
+vault_manage_group: true
 vault_user: "vault"
-vault_manage_group: false
 vault_group: "vault"
-vault_groups: "null"
+vault_groups: ""
 
 # descr: log management
 vault_enable_log: false

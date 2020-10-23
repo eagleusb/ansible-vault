@@ -20,6 +20,7 @@
   get_url:
     url: "{{ vault_checksum_file_url }}"
     dest: "/tmp/vault/{{ vault_shasums }}"
+    mode: 0600
   when: "not vault_checksum.stat.exists | bool()"
 
 - name: "vault | get vault package checksum"
@@ -39,6 +40,7 @@
     dest: "/tmp/vault/{{ vault_pkg }}"
     checksum: "sha256:{{ vault_sha256.stdout.split(' ')|first }}"
     timeout: 42
+    mode: 0600
   when: "not vault_package.stat.exists | bool()"
 
 - name: "vault | unarchive vault and install binary"

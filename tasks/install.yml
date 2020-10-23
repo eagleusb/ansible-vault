@@ -27,6 +27,7 @@
   get_url:
     url: "{{ vault_checksum_file_url }}"
     dest: "{{ role_path }}/files/{{ vault_shasums }}"
+    mode: 0600
   become: false
   run_once: true
   when: "not vault_checksum.stat.exists | bool()"
@@ -60,6 +61,7 @@
     dest: "{{ role_path }}/files/{{ vault_pkg }}"
     checksum: "sha256:{{ vault_sha256.stdout }}"
     timeout: 42
+    mode: 0600
   become: false
   run_once: true
   when: "not vault_package.stat.exists | bool()"

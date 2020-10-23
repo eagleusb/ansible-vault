@@ -152,7 +152,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0600
-  notify: "restart vault"
+  notify: "reload vault"
 
 - name: "vault | set exec output to log path when enabled log"
   set_fact:
@@ -220,23 +220,14 @@
     group: "root"
     mode: 0644
   register: "systemd_unit"
-  notify: "daemon-reload systemd"
+  notify: "reload systemd and restart vault"
   when:
     - "ansible_service_mgr == 'systemd'"
     - "not ansible_os_family == 'FreeBSD'"
     - "not ansible_os_family == 'Solaris'"
     - "systemd_version is defined"
 
-# TODO: handler
-- name: "vault | start vault"
-  become: true
-  service:
-    name: "{{ vault_systemd_service_name }}"
-    state: "started"
-    enabled: true
-
-# TODO: needs ?
-- name: "vault | restart vault if needed"
+- name: "vault | force start of vault"
   meta: "flush_handlers"
 
 # TODO: move

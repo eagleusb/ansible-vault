@@ -101,12 +101,36 @@ vault_backend_mysql: "backend/mysql.j2"
 vault_backend_raft: "backend/raft.j2"
 vault_backend_s3: "backend/s3.j2"
 
+# descr: tls
+vault_tls_disable: "{{ lookup('env','VAULT_TLS_DISABLE') | default(1, true) }}"
+vault_tls_gossip: "{{ lookup('env','VAULT_TLS_GOSSIP') | default(0, true) }}"
+
+vault_tls_disable_client_certs: false
+vault_tls_files_remote_src: false
+vault_tls_require_and_verify_client_cert: false
+
+vault_tls_copy_keys: true
+vault_protocol: "{% if vault_tls_disable %}http{% else %}https{% endif %}"
+# TODO: rename >_>
+validate_certs_during_api_reachable_check: true
+
+vault_tls_config_path: "{{ lookup('env','VAULT_TLS_DIR') | default('/etc/vault/tls', true) }}"
+vault_tls_src_files: "{{ lookup('env','VAULT_TLS_SRC_FILES') | default(role_path+'/files', true) }}"
+
+vault_tls_ca_file: "{{ lookup('env','VAULT_TLS_CA_CRT') | default('ca.crt', true) }}"
+vault_tls_cert_file: "{{ lookup('env','VAULT_TLS_CERT_FILE') | default('server.crt', true) }}"
+vault_tls_key_file: "{{ lookup('env','VAULT_TLS_KEY_FILE') | default('server.key', true) }}"
+
+vault_tls_cipher_suites: ""
+vault_tls_min_version: "{{ lookup('env','VAULT_TLS_MIN_VERSION') | default('tls12', true) }}"
+vault_tls_prefer_server_cipher_suites: "{{ lookup('env','VAULT_TLS_PREFER_SERVER_CIPHER_SUITES') | default('false', true) }}"
+
 # descr: backend tls support
-vault_backend_tls_src_files: "{{ vault_tls_src_files }}"
-vault_backend_tls_config_path: "{{ vault_tls_config_path }}"
-vault_backend_tls_cert_file: "{{ vault_tls_cert_file }}"
-vault_backend_tls_key_file: "{{ vault_tls_key_file }}"
 vault_backend_tls_ca_file: "{{ vault_tls_ca_file }}"
+vault_backend_tls_cert_file: "{{ vault_tls_cert_file }}"
+vault_backend_tls_config_path: "{{ vault_tls_config_path }}"
+vault_backend_tls_key_file: "{{ vault_tls_key_file }}"
+vault_backend_tls_src_files: "{{ vault_tls_src_files }}"
 
 # descr: consul backend parameters
 vault_consul: "127.0.0.1:8500"
@@ -118,27 +142,27 @@ vault_consul_scheme: "http"
 # descr: etcd backend storage parameters
 vault_etcd: "127.0.0.1:2379"
 vault_etcd_api: "v3"
-vault_etcd_path: "/vault/"
-vault_etcd_discovery_srv: ""
 vault_etcd_discovery_srv_name: ""
+vault_etcd_discovery_srv: ""
 vault_etcd_ha_enabled: false
+vault_etcd_lock_timeout: "15s"
+vault_etcd_password: ""
+vault_etcd_path: "/vault/"
+vault_etcd_request_timeout: "5s"
 vault_etcd_sync: true
 vault_etcd_username: ""
-vault_etcd_password: ""
-vault_etcd_request_timeout: "5s"
-vault_etcd_lock_timeout: "15s"
 
 # descr: s3 backend parameters
 vault_s3_access_key: ""
-vault_s3_secret_key: ""
 vault_s3_bucket: "vault_backend"
-vault_s3_region: "us-east-1"
-vault_s3_endpoint: ""
 vault_s3_disable_ssl: false
+vault_s3_endpoint: ""
 vault_s3_force_path_style: false
 vault_s3_kms_key_id: ""
-vault_s3_session_token: ""
 vault_s3_max_parallel: "128"
+vault_s3_region: "us-east-1"
+vault_s3_secret_key: ""
+vault_s3_session_token: ""
 
 # descr: dynamodb backend parameters
 vault_dynamodb: "{{ lookup('env', 'AWS_DYNAMODB_ENDPOINT') | default('', false) }}"
@@ -207,36 +231,14 @@ vault_systemd_service_name: "vault"
 vault_systemd_template: "service/systemd.j2"
 vault_sysvinit_template: "service/sysvinit.j2"
 
-# descr: tls
-vault_tls_copy_keys: true
-vault_protocol: "{% if vault_tls_disable %}http{% else %}https{% endif %}"
-validate_certs_during_api_reachable_check: true
-
-vault_tls_config_path: "{{ lookup('env','VAULT_TLS_DIR') | default('/etc/vault/tls', true) }}"
-vault_tls_src_files: "{{ lookup('env','VAULT_TLS_SRC_FILES') | default(role_path+'/files', true) }}"
-
-vault_tls_disable: "{{ lookup('env','VAULT_TLS_DISABLE') | default(1, true) }}"
-vault_tls_gossip: "{{ lookup('env','VAULT_TLS_GOSSIP') | default(0, true) }}"
-
-vault_tls_cert_file: "{{ lookup('env','VAULT_TLS_CERT_FILE') | default('server.crt', true) }}"
-vault_tls_key_file: "{{ lookup('env','VAULT_TLS_KEY_FILE') | default('server.key', true) }}"
-vault_tls_ca_file: "{{ lookup('env','VAULT_TLS_CA_CRT') | default('ca.crt', true) }}"
-
-vault_tls_min_version: "{{ lookup('env','VAULT_TLS_MIN_VERSION') | default('tls12', true) }}"
-vault_tls_cipher_suites: ""
-vault_tls_prefer_server_cipher_suites: "{{ lookup('env','VAULT_TLS_PREFER_SERVER_CIPHER_SUITES') | default('false', true) }}"
-vault_tls_files_remote_src: false
-vault_tls_require_and_verify_client_cert: false
-vault_tls_disable_client_certs: false
-
 # descr: aws kms auto-unseal
 vault_awskms: false
-vault_awskms_backend: "seal/awskms.j2"
-vault_awskms_region: "{{ lookup('env','AWS_DEFAULT_REGION') | default('us-east-1', false) }}"
 vault_awskms_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID') | default('', false) }}"
-vault_awskms_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') | default('', false) }}"
-vault_awskms_key_id: "{{ lookup('env','VAULT_AWSKMS_SEAL_KEY_ID') | default('', false) }}"
+vault_awskms_backend: "seal/awskms.j2"
 vault_awskms_endpoint: "{{ lookup('env','AWS_KMS_ENDPOINT') | default('', false) }}"
+vault_awskms_key_id: "{{ lookup('env','VAULT_AWSKMS_SEAL_KEY_ID') | default('', false) }}"
+vault_awskms_region: "{{ lookup('env','AWS_DEFAULT_REGION') | default('us-east-1', false) }}"
+vault_awskms_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') | default('', false) }}"
 
 # descr: azure keyvault auto-unseal
 vault_azurekeyvault: false
@@ -245,29 +247,29 @@ vault_azurekeyvault_backend: "seal/azurekeyvault.j2"
 # descr: gcp kms auto-seal
 vault_gkms: false
 vault_backend_gkms: "seal/gcpkms.j2"
-vault_gkms_project: ""
 vault_gkms_credentials_src_file: ""
 vault_gkms_credentials: "/home/{{ vault_user }}/vault-kms.json"
-vault_gkms_region: "global"
-vault_gkms_key_ring: "vault"
 vault_gkms_crypto_key: "vault_key"
+vault_gkms_key_ring: "vault"
+vault_gkms_project: ""
+vault_gkms_region: "global"
 
 # descr: pkcs11 unseal
 vault_enterprise_premium_hsm: false
-vault_hsm_app: "pkcs11"
 vault_backend_seal: "seal/pkcs11.j2"
+vault_hsm_app: "pkcs11"
+vault_seal_generate_key: false
+vault_seal_key_label: "vault-hsm-key"
+vault_seal_key_mechanism: ""
 vault_seal_lib: "/lib64/hsmlibrary.so"
 vault_seal_pin: 12345
-vault_seal_key_label: "vault-hsm-key"
-vault_seal_generate_key: false
-vault_seal_key_mechanism: ""
-vault_seal_token_label: ""
 vault_seal_slot: 0
+vault_seal_token_label: ""
 vault_softcard_enable: false
 vault_telemetry_enabled: false
 
 # descr: enterprise edition
 vault_enterprise: "{{ lookup('env','VAULT_ENTERPRISE') | default(false, true) }}"
 vault_enterprise_pkg: "vault-enterprise_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip"
-vault_enterprise_shasums: "vault-enterprise_{{ vault_version }}_SHA256SUMS"
 vault_enterprise_premium: false
+vault_enterprise_shasums: "vault-enterprise_{{ vault_version }}_SHA256SUMS"

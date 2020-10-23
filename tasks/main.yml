@@ -13,15 +13,14 @@
       paths:
         - vars
 
-- name: ""
+- name: "vault | import preliminary tasks"
   import_tasks: "prepare.yml"
 
-- name: ""
+- name: "vault | import vault checks tasks"
   import_tasks: "check.yml"
 
 # TODO: refactor with input vars
-- name: ""
-  block:
+- block:
     - name: "vault | vault enterprise installation (local)"
       include_tasks: "install_enterprise.yml"
       when:
@@ -69,15 +68,18 @@
     mode: 0600
   notify: "reload vault"
 
-- import_tasks: "unseal.yml"
+- name: "vault | import unsealing tasks"
+  import_tasks: "unseal.yml"
 
-- import_tasks: "service.yml"
+- name: "vault | import service init tasks"
+  import_tasks: "service.yml"
 
-- name: "vault | initialize vault"
+- name: "vault | include initialization tasks"
   include_tasks: "init.yml"
   when: "vault_init | bool()"
 
-- include_tasks: "bash.yml"
+- name: "vault | include bash configuration tasks"
+  include_tasks: "bash.yml"
   when: "ansible_os_family != 'Windows'"
 
 - name: "vault | check vault api status"

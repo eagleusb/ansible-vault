@@ -24,9 +24,6 @@
   when: "not vault_installation is failed"
   tags: "skip_ansible_lint"
 
-- set_fact:
-
-
 - name: "vault | compute if installation is required"
   set_fact:
     installation_required: "{{ vault_installation is failed or installed_vault_version.stdout != vault_version }}"

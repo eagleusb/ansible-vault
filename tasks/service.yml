@@ -1,7 +1,6 @@
 ---
 
-- name:
-  block:
+- block:
     - name: "vault | bsd init script"
       template:
         src: "{{ vault_bsdinit_template }}"

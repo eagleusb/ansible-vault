@@ -17,6 +17,7 @@
         group: "{{ vault_group }}"
         groups: "{{ vault_groups | default(omit) }}"
         system: true
+        shell: "/bin/bash"
       when: vault_manage_user | bool()
   become: true
 

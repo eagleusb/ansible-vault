@@ -1,0 +1,72 @@
+---
+
+- block:
+    - name: "vault | bsd init script"
+      template:
+        src: "{{ vault_bsdinit_template }}"
+        dest: "/etc/rc.d/vault"
+        owner: "root"
+        group: wheel
+        mode: 0755
+      when: "ansible_os_family == 'FreeBSD'"
+
+    - name: "vault | sysv init script"
+      template:
+        src: "{{ vault_sysvinit_template }}"
+        dest: "/etc/init.d/vault"
+        owner: "root"
+        group: "root"
+        mode: 0755
+      when:
+        - "not ansible_service_mgr == 'systemd'"
+        - "not ansible_os_family in ['Debian', 'FreeBSD', 'Solaris']"
+
+    - name: "vault | debian init script"
+      template:
+        src: "{{ vault_debian_init_template }}"
+        dest: /etc/init.d/vault
+        owner: "root"
+        group: "root"
+        mode: 0755
+      when:
+        - "not ansible_service_mgr == 'systemd'"
+        - "ansible_os_family == 'Debian'"
+
+    - name: "vault | extract systemd version"
+      shell: |
+        set -o pipefail
+        systemctl --version systemd | head -n 1 | cut -d' ' -f2
+      args:
+        executable: "/bin/bash"
+      changed_when: false
+      check_mode: false
+      register: "systemd_version"
+      when:
+        - "ansible_service_mgr == 'systemd'"
+        - "not ansible_os_family in ['FreeBSD', 'Solaris']"
+      tags: "skip_ansible_lint"
+
+    - name: "vault | systemd unit"
+      template:
+        src: "{{ vault_systemd_template }}"
+        dest: "/lib/systemd/system/{{ vault_systemd_service_name }}.service"
+        force: true
+        owner: "root"
+        group: "root"
+        mode: 0644
+      register: "systemd_unit"
+      notify: "reload systemd and restart vault"
+      when:
+        - "ansible_service_mgr == 'systemd'"
+        - "systemd_version is defined"
+        - "not ansible_os_family in ['FreeBSD', 'Solaris']"
+
+    - name: "vault | ensure vault is started and enabled"
+      service:
+        name: "{{ vault_systemd_service_name }}"
+        state: "started"
+        enabled: true
+
+    - name: "vault | force reload or restart on config changes"
+      meta: "flush_handlers"
+  become: true

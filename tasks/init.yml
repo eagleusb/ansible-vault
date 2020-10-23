@@ -3,6 +3,7 @@
 - name: "vault | get the first node in {{ vault_group_name }}"
   set_fact:
     vault_first_server: "{{ groups[vault_group_name] | sort() | first() }}"
+  run_once: true
 
 - block:
     - name: "vault | set vault address for the first node"
@@ -39,6 +40,7 @@
       set_fact:
         vault_init_outputs: "{{ vault_init.stdout }}"
       when: "is_vault_initialized.rc == 2"
+      no_log: true
   run_once: true
   become: true
   become_user: "{{ vault_user }}"
@@ -54,9 +56,14 @@
     - name: "vault | backup temporarly unseal keys and root token"
       copy:
         dest: "{{ vault_init_backup.path }}/output.json"
-        content: "{{ vault_init_outputs | from_json() }}"
+        content: "{{ vault_init_outputs }}"
         mode: 0400
+      no_log: true
+
+    - name: "vault | unseal keys and root token"
+      debug:
+        msg: "Backup and delete your unseal keys and root token from {{ vault_init_backup.path }}"
   when: "vault_init_outputs is defined and vault_init_outputs"
+  run_once: true
   become: no
   delegate_to: localhost
-  no_log: true

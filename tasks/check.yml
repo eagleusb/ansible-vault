@@ -1,0 +1,29 @@
+---
+
+- name: "vault | check vault installation"
+  shell: "command -v vault"
+  environment:
+    PATH: "{{ vault_bin_path }}:{{ ansible_env.PATH }}"
+  args:
+    executable: "/bin/bash"
+  register: "vault_installation"
+  changed_when: false
+  ignore_errors: true
+  check_mode: false
+  tags: "skip_ansible_lint"
+
+- name: "vault | get installed vault version"
+  shell: |
+    set -o pipefail
+    {{ vault_installation.stdout }} -version | cut -d' ' -f2 | tr -d 'v'
+  args:
+    executable: "/bin/bash"
+  register: "installed_vault_version"
+  changed_when: false
+  check_mode: false
+  when: "not vault_installation is failed"
+  tags: "skip_ansible_lint"
+
+- name: "vault | compute if installation is required"
+  set_fact:
+    installation_required: "{{ vault_installation is failed or installed_vault_version.stdout != vault_version }}"

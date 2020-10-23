@@ -1,12 +1,29 @@
 ---
 
+- name: "start and enable vault"
+  become: true
+  service:
+    name: "{{ vault_systemd_service_name }}"
+    state: "started"
+    enabled: true
+  listen: "start and reload vault"
+
+- name: "reload vault"
+  become: true
+  service:
+    name: "{{ vault_systemd_service_name }}"
+    state: "reloaded"
+  listen: "start and reload vault"
+
 - name: "restart vault"
   become: true
   service:
     name: "{{ vault_systemd_service_name }}"
     state: "restarted"
+  listen: "reload systemd and restart vault"
 
 - name: "daemon-reload systemd"
   become: true
   systemd:
     daemon-reload: true
+  listen: "reload systemd and restart vault"

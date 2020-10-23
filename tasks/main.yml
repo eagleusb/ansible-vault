@@ -227,7 +227,14 @@
     - "not ansible_os_family == 'Solaris'"
     - "systemd_version is defined"
 
-- name: "vault | force start of vault"
+- name: "vault | ensure vault is started and enabled"
+  become: true
+  service:
+    name: "{{ vault_systemd_service_name }}"
+    state: "started"
+    enabled: true
+
+- name: "vault | force reload or restart on config changes"
   meta: "flush_handlers"
 
 # TODO: move

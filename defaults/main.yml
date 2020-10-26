@@ -32,8 +32,9 @@ vault_checksum_file_url:
   {{ vault_shasums }}"
 
 # descr: installation method
-vault_install_hashi_repo: false
+vault_install_repository: false
 vault_install_remotely: false
+vault_upgrade_inplace: false
 
 # descr: runtime and configuration fs paths
 vault_bin_path: "/usr/local/bin"

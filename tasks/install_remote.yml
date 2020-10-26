@@ -27,6 +27,13 @@
     force: false
     mode: 0600
 
+- name: "vault | ensure vault is stopped before upgrade"
+  service:
+    name: "{{ vault_systemd_service_name }}"
+    state: "stopped"
+  when: "vault_upgrade_inplace is truthy(convert_bool=true)"
+
+# TODO: support proper binary replacement if upgrade in-place
 - name: "vault | unarchive vault and install binary"
   unarchive:
     src: "{{ vault_install_path.path }}/{{ vault_pkg }}"

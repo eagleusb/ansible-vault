@@ -1,13 +1,3 @@
-### BEGIN INIT INFO
-# Provides:          vault
-# Required-Start:    $local_fs $remote_fs
-# Required-Stop:     $local_fs $remote_fs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Vault agent
-# Description:       Vault secret management tool
-### END INIT INFO
-
 [Unit]
 Description="HashiCorp Vault - A tool for managing secrets"
 Documentation=https://www.vaultproject.io/docs/
@@ -25,7 +15,7 @@ PrivateTmp=yes
 PrivateDevices=yes
 SecureBits=keep-caps
 Capabilities=CAP_IPC_LOCK+ep
-{% if systemd_version.stdout is version('230', '>=') %}
+{% if systemd_version is version('230', '>=') %}
 AmbientCapabilities=CAP_SYSLOG CAP_IPC_LOCK
 {% endif %}
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK

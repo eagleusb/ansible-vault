@@ -33,30 +33,26 @@
       when:
         - not vault_enterprise | bool()
         - not vault_install_remotely | bool()
-        - not vault_install_hashi_repo | bool()
+        - not vault_install_repository | bool()
 
     - name: "vault | vault installation (repository)"
       include_tasks: "install_hashi_repo.yml"
       when:
         - not vault_enterprise | bool()
         - not vault_install_remotely | bool()
-        - vault_install_hashi_repo | bool()
+        - vault_install_repository | bool()
 
     - name: "vault | vault installation (remotely)"
       include_tasks: "install_remote.yml"
       when:
         - not vault_enterprise | bool()
         - vault_install_remotely | bool()
-        - not vault_install_hashi_repo | bool()
-  when: installation_required | bool()
+        - not vault_install_repository | bool()
+  when: "installation_required | bool()"
 
-# TODO: merge
 - name: "vault | include tls configuration"
   include_tasks: "tls.yml"
-  when: "vault_tls_disable == 0"
-- name: "vault | include backend tls configuration"
-  include_tasks: "tls_backend.yml"
-  when: "vault_tls_gossip == 1"
+  when: "vault_tls_enable | bool()"
 
 - name: "vault | main configuration template"
   become: true
@@ -82,15 +78,30 @@
   include_tasks: "bash.yml"
   when: "ansible_os_family != 'Windows'"
 
+# TODO: better check
+# outputs advanced info
+# "json": {
+#         "initialized": true,
+#         "performance_standby": false,
+#         "replication_dr_mode": "unknown",
+#         "replication_performance_mode": "unknown",
+#         "sealed": true,
+#         "server_time_utc": 1603723355,
+#         "standby": true,
+#         "version": "1.5.5"
+#     }
 - name: "vault | check vault api status"
   vars:
     vault_addr: "{{ (vault_address == '0.0.0.0') | ternary('127.0.0.1', vault_address) }}"
   uri:
-    validate_certs: "{{ validate_certs_during_api_reachable_check | bool() }}"
-    url: "{{ vault_protocol }}://{{ vault_hostname | default(vault_addr, true) }}:{{ vault_port }}/v1/sys/health"
-    method: GET
-    status_code: 200, 429, 472, 473, 501, 503
-    body_format: json
+    validate_certs: "{{ vault_tls_validate_certs_api_check | bool() }}"
+    url:
+      "{{ vault_protocol }}://\
+      {{ vault_hostname | default(vault_addr, true) }}:\
+      {{ vault_port }}/v1/sys/health"
+    method: "GET"
+    status_code: "200, 429, 472, 473, 501, 503"
+    body_format: "json"
   register: "check_result"
   retries: 6
   until: "check_result is succeeded"

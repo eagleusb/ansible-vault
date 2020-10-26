@@ -52,16 +52,24 @@
   become: false
   delegate_to: "localhost"
 
+- name: "vault | ensure vault is stopped before upgrade"
+  service:
+    name: "{{ vault_systemd_service_name }}"
+    state: "stopped"
+  when: "vault_upgrade_inplace | bool()"
+
 - name: "vault | install vault (local)"
   become: true
   copy:
     src: "{{ role_path }}/files/vault"
     dest: "{{ vault_bin_path }}"
+    force: "{{ vault_upgrade_inplace | default(omit) }}"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0755
 
 - name: "vault | cleanup (local)"
+  become: false
   file:
     path: "{{ item }}"
     state: "absent"

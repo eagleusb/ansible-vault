@@ -32,8 +32,9 @@ vault_checksum_file_url:
   {{ vault_shasums }}"
 
 # descr: installation method
-vault_install_hashi_repo: false
+vault_install_repository: false
 vault_install_remotely: false
+vault_upgrade_inplace: false
 
 # descr: runtime and configuration fs paths
 vault_bin_path: "/usr/local/bin"
@@ -91,57 +92,59 @@ vault_api_addr:
 vault_max_lease_ttl: "768h"
 vault_default_lease_ttl: "768h"
 
-# descr: backend selection and configuration
-vault_backend: "consul"
-vault_backend_consul: "backend/consul.j2"
-vault_backend_dynamodb: "backend/dynamodb.j2"
-vault_backend_etcd: "backend/etcd.j2"
-vault_backend_file: "backend/file.j2"
-vault_backend_mysql: "backend/mysql.j2"
-vault_backend_raft: "backend/raft.j2"
-vault_backend_s3: "backend/s3.j2"
-
 # descr: tls
-vault_tls_disable: "{{ lookup('env','VAULT_TLS_DISABLE') | default(1, true) }}"
-vault_tls_gossip: "{{ lookup('env','VAULT_TLS_GOSSIP') | default(0, true) }}"
+vault_tls_enable: true
+vault_tls_copy_keys: true
+vault_protocol: "{{ (vault_tls_enable | bool()) | ternary('https', 'http') }}"
+vault_tls_validate_certs_api_check: true
 
 vault_tls_disable_client_certs: false
-vault_tls_files_remote_src: false
 vault_tls_require_and_verify_client_cert: false
 
-vault_tls_copy_keys: true
-vault_protocol: "{% if vault_tls_disable %}http{% else %}https{% endif %}"
-# TODO: rename >_>
-validate_certs_during_api_reachable_check: true
+vault_tls_config_path: "/etc/vault/tls"
+vault_tls_src_files: "{{ role_path + '/files' }}"
+vault_tls_src_files_remote: false
 
-vault_tls_config_path: "{{ lookup('env','VAULT_TLS_DIR') | default('/etc/vault/tls', true) }}"
-vault_tls_src_files: "{{ lookup('env','VAULT_TLS_SRC_FILES') | default(role_path+'/files', true) }}"
-
-vault_tls_ca_file: "{{ lookup('env','VAULT_TLS_CA_CRT') | default('ca.crt', true) }}"
-vault_tls_cert_file: "{{ lookup('env','VAULT_TLS_CERT_FILE') | default('server.crt', true) }}"
-vault_tls_key_file: "{{ lookup('env','VAULT_TLS_KEY_FILE') | default('server.key', true) }}"
-
+vault_tls_ca_file: "ca.crt"
+vault_tls_cert_file: "server.crt"
+vault_tls_key_file: "server.key"
 vault_tls_cipher_suites: ""
-vault_tls_min_version: "{{ lookup('env','VAULT_TLS_MIN_VERSION') | default('tls12', true) }}"
-vault_tls_prefer_server_cipher_suites: "{{ lookup('env','VAULT_TLS_PREFER_SERVER_CIPHER_SUITES') | default('false', true) }}"
+vault_tls_min_version: "tls12"
+vault_tls_prefer_server_cipher_suites: "false"
 
-# descr: backend tls support
-vault_backend_tls_ca_file: "{{ vault_tls_ca_file }}"
-vault_backend_tls_cert_file: "{{ vault_tls_cert_file }}"
-vault_backend_tls_config_path: "{{ vault_tls_config_path }}"
-vault_backend_tls_key_file: "{{ vault_tls_key_file }}"
-vault_backend_tls_src_files: "{{ vault_tls_src_files }}"
+# descr: backend selection and configuration
+vault_backend: "raft"
+vault_backend_config:
+  consul: "consul.j2"
+  dynamodb: "dynamodb.j2"
+  etcd: "etcd.j2"
+  file: "file.j2"
+  mysql: "mysql.j2"
+  raft: "raft.j2"
+  s3: "s3.j2"
+
+# descr: raft backend parameters
+vault_raft_node_id: "{{ ansible_machine_id | hash('sha1') }}"
+vault_raft_retry_join: []
+  # - leader_api_addr:
+  #   leader_ca_cert_file:
+  #   leader_client_cert_file:
+  #   leader_client_key_file:
+  #   leader_ca_cert:
+  #   leader_client_cert:
+  #   leader_client_key:
 
 # descr: consul backend parameters
 vault_consul: "127.0.0.1:8500"
 vault_consul_path: "vault"
 vault_consul_service: "vault"
-vault_consul_scheme: "http"
-# vault_consul_token:
+vaukt_consul_https: false
+vault_consul_token: ""
 
 # descr: etcd backend storage parameters
 vault_etcd: "127.0.0.1:2379"
 vault_etcd_api: "v3"
+vault_etcd_https: false
 vault_etcd_discovery_srv_name: ""
 vault_etcd_discovery_srv: ""
 vault_etcd_ha_enabled: false
@@ -186,17 +189,6 @@ vault_mysql_tls_ca_file: ""
 vault_mysql_max_parallel: ""
 vault_mysql_max_idle_connections: ""
 vault_mysql_max_connection_lifetime: ""
-
-# descr: raft backend parameters
-vault_raft_node_id: "raft_node_1"
-vault_raft_retry_join: []
-  # - leader_api_addr:
-  #   leader_ca_cert_file:
-  #   leader_client_cert_file:
-  #   leader_client_key_file:
-  #   leader_ca_cert:
-  #   leader_client_cert:
-  #   leader_client_key:
 
 # Consul service registration settings
 vault_service_registration_consul_enable: false

@@ -53,10 +53,7 @@
 # TODO: merge
 - name: "vault | include tls configuration"
   include_tasks: "tls.yml"
-  when: "vault_tls_disable == 0"
-- name: "vault | include backend tls configuration"
-  include_tasks: "tls_backend.yml"
-  when: "vault_tls_gossip == 1"
+  when: "vault_tls_disable == true"
 
 - name: "vault | main configuration template"
   become: true

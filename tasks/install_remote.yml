@@ -31,7 +31,7 @@
   service:
     name: "{{ vault_systemd_service_name }}"
     state: "stopped"
-  when: "vault_upgrade_inplace is truthy(convert_bool=true)"
+  when: "vault_upgrade_inplace | bool()"
 
 # TODO: support proper binary replacement if upgrade in-place
 - name: "vault | unarchive vault and install binary"

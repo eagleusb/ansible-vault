@@ -20,6 +20,6 @@
       is_vault_installed is failed or
       (
         installed_vault_version.strip('v') is version(vault_version, '!=') and
-        vault_upgrade_inplace is truthy(convert_bool=true)
+        vault_upgrade_inplace | bool()
       )
     }}"

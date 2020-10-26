@@ -56,7 +56,7 @@
   service:
     name: "{{ vault_systemd_service_name }}"
     state: "stopped"
-  when: "vault_upgrade_inplace is truthy(convert_bool=true)"
+  when: "vault_upgrade_inplace | bool()"
 
 - name: "vault | install vault (local)"
   become: true

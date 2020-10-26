@@ -12,9 +12,9 @@
 - name: "vault | vault ssl certificate and key"
   become: true
   copy:
-    remote_src: "{{ vault_tls_files_remote_src }}"
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    remote_src: "{{ vault_tls_src_files_remote | default(omit) }}"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: "{{ item.mode }}"

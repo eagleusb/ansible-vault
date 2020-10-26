@@ -92,14 +92,15 @@ vault_max_lease_ttl: "768h"
 vault_default_lease_ttl: "768h"
 
 # descr: backend selection and configuration
-vault_backend: "consul"
-vault_backend_consul: "backend/consul.j2"
-vault_backend_dynamodb: "backend/dynamodb.j2"
-vault_backend_etcd: "backend/etcd.j2"
-vault_backend_file: "backend/file.j2"
-vault_backend_mysql: "backend/mysql.j2"
-vault_backend_raft: "backend/raft.j2"
-vault_backend_s3: "backend/s3.j2"
+vault_backend: "raft"
+vault_backend_config:
+  consul: "consul.j2"
+  dynamodb: "dynamodb.j2"
+  etcd: "etcd.j2"
+  file: "file.j2"
+  mysql: "backend/mysql.j2"
+  raft: "raft.j2"
+  s3: "s3.j2"
 
 # descr: tls
 vault_tls_disable: false

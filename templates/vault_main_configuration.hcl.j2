@@ -30,21 +30,7 @@ listener "tcp" {
   tls_disable = "{{ vault_tls_disable | bool() | lower() }}"
 }
 
-{% if vault_backend == 'consul' -%}
-  {% include vault_backend_consul with context -%}
-{% elif vault_backend == 'etcd' -%}
-  {% include vault_backend_etcd with context -%}
-{% elif vault_backend == 'file' -%}
-  {% include vault_backend_file with context -%}
-{% elif vault_backend == 's3' -%}
-  {% include vault_backend_s3 with context -%}
-{% elif vault_backend == 'dynamodb' -%}
-  {% include vault_backend_dynamodb with context -%}
-{% elif vault_backend == 'mysql' -%}
-  {% include vault_backend_mysql with context -%}
-{% elif vault_backend == 'raft' -%}
-  {% include vault_backend_raft with context -%}
-{% endif %}
+{% include "backend/" + vault_backend_config[vault_backend] with context %}
 
 {% if vault_service_registration_consul_enable -%}
   {% include vault_service_registration_consul_template with context -%}

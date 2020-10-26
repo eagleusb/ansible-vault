@@ -48,12 +48,12 @@
         - not vault_enterprise | bool()
         - vault_install_remotely | bool()
         - not vault_install_hashi_repo | bool()
-  when: installation_required | bool()
+  when: "installation_required | bool()"
 
 # TODO: merge
 - name: "vault | include tls configuration"
   include_tasks: "tls.yml"
-  when: "vault_tls_disable == true"
+  when: "not vault_tls_disable | bool()"
 
 - name: "vault | main configuration template"
   become: true

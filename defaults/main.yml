@@ -103,7 +103,7 @@ vault_backend_config:
   s3: "s3.j2"
 
 # descr: tls
-vault_tls_disable: false
+vault_tls_enable: true
 vault_tls_copy_keys: true
 
 vault_tls_disable_client_certs: false

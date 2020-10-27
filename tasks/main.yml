@@ -36,7 +36,7 @@
         - not vault_install_repository | bool()
 
     - name: "vault | vault installation (repository)"
-      include_tasks: "install_hashi_repo.yml"
+      include_tasks: "install_repository.yml"
       when:
         - not vault_enterprise | bool()
         - not vault_install_remotely | bool()

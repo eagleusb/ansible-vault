@@ -1,5 +1,6 @@
 ---
 
 vault_os_packages:
+  - apt-transport-https
   - git
   - unzip

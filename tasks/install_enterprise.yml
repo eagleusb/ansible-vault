@@ -36,7 +36,7 @@
     dest: "{{ role_path }}/files/{{ vault_enterprise_pkg }}"
     checksum: sha256:{{ vault_sha256.stdout }}
     timeout: 42
-    mode: 0600
+    mode: "0600"
   become: false
   run_once: true
   when: "not vault_package.stat.exists | bool()"
@@ -47,7 +47,7 @@
     src: "{{ role_path }}/files/{{ vault_enterprise_pkg }}"
     dest: "{{ role_path }}/files/"
     creates: "{{ role_path }}/files/vault"
-    mode: 0755
+    mode: "0755"
   become: false
   run_once: true
   delegate_to: "localhost"
@@ -58,7 +58,7 @@
     dest: "{{ vault_bin_path }}"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
-    mode: 0755
+    mode: "0755"
   notify: "restart vault"
 
 - name: "vault enterprise | remove {{ role_path }}/files/vault"

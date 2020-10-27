@@ -6,14 +6,14 @@
         path: "{{ vault_home }}/.bashrc"
         line: "export VAULT_ADDR='{{ vault_protocol }}://{{ vault_address }}:{{ vault_port }}'"
         create: true
-        mode: 0644
+        mode: "0644"
 
     - name: "vault | add vault_cacert environment variable in bashrc"
       lineinfile:
         path: "{{ vault_home }}/.bashrc"
         line: "export VAULT_CACERT={{ vault_tls_config_path }}/{{ vault_tls_ca_file }}"
         create: true
-        mode: 0644
+        mode: "0644"
       when: "vault_tls_enable | bool()"
   become: true
   become_user: "{{ vault_user }}"

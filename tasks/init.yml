@@ -57,7 +57,7 @@
       copy:
         dest: "{{ vault_init_backup.path }}/output.json"
         content: "{{ vault_init_outputs }}"
-        mode: 0400
+        mode: "0400"
       no_log: true
 
     - name: "vault | unseal keys and root token"

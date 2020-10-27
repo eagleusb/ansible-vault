@@ -7,7 +7,7 @@
         dest: "/etc/rc.d/vault"
         owner: "root"
         group: wheel
-        mode: 0755
+        mode: "0755"
       when: "ansible_os_family == 'FreeBSD'"
 
     - name: "vault | sysv init script"
@@ -16,7 +16,7 @@
         dest: "/etc/init.d/vault"
         owner: "root"
         group: "root"
-        mode: 0755
+        mode: "0755"
       when:
         - "not ansible_service_mgr == 'systemd'"
         - "not ansible_os_family in ['Debian', 'FreeBSD', 'Solaris']"
@@ -27,7 +27,7 @@
         dest: /etc/init.d/vault
         owner: "root"
         group: "root"
-        mode: 0755
+        mode: "0755"
       when:
         - "not ansible_service_mgr == 'systemd'"
         - "ansible_os_family == 'Debian'"
@@ -46,7 +46,7 @@
         force: true
         owner: "root"
         group: "root"
-        mode: 0644
+        mode: "0644"
       register: "systemd_unit"
       notify: "reload systemd and restart vault"
       when:

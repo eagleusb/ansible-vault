@@ -14,9 +14,16 @@
           {{ vault_port }}"
 
     - name: "vault | check the init status"
-      shell:
-        "{{ vault_bin_path }}/vault operator init -status
-        -address={{ vault_first_server_addr }}"
+      shell: >-
+        {{ vault_bin_path }}/vault operator init -status
+        -address={{ vault_first_server_addr }}
+        {%- if vault_tls_enable | bool() %}
+        -ca-cert={{ vault_tls_config_path }}/{{ vault_tls_ca_file }}
+        {%- elif vault_tls_skip_verify | bool() and not vault_tls_server_name %}
+        -tls-skip-verify
+        {%- elif vault_tls_server_name and not vault_tls_skip_verify | bool() %}
+        -tls-server-name={{ vault_tls_server_name }}
+        {%- endif %}
       args:
         executable: "/bin/bash"
       register: "is_vault_initialized"
@@ -24,12 +31,19 @@
       tags: "skip_ansible_lint"
 
     - name: "vault | initialize vault"
-      shell:
-        "{{ vault_bin_path }}/vault operator init
+      shell: >-
+        {{ vault_bin_path }}/vault operator init
         -key-shares={{ vault_init_key_shares | default(5) | int() }}
         -key-threshold={{ vault_init_key_threshold | default(3) | int() }}
         -format=json
-        -address={{ vault_first_server_addr }}"
+        -address={{ vault_first_server_addr }}
+        {%- if vault_tls_enable | bool() %}
+        -ca-cert={{ vault_tls_config_path }}/{{ vault_tls_ca_file }}
+        {%- elif vault_tls_skip_verify | bool() %}
+        -tls-skip-verify
+        {%- elif vault_tls_server_name and not vault_tls_skip_verify | bool() %}
+        -tls-server-name={{ vault_tls_server_name }}
+        {%- endif %}
       args:
         executable: "/bin/bash"
       register: "vault_init"
@@ -45,6 +59,7 @@
   become: true
   become_user: "{{ vault_user }}"
   delegate_to: "{{ vault_first_server | mandatory() }}"
+  when: "not ansible_check_mode"
 
 - block:
     - name: "vault | create temporary secret directory (local)"

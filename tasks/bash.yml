@@ -15,5 +15,25 @@
         create: true
         mode: "0644"
       when: "vault_tls_enable | bool()"
+
+    - name: "vault | add vault_skip_verify environment variable in bashrc"
+      lineinfile:
+        path: "{{ vault_home }}/.bashrc"
+        line: "export VAULT_SKIP_VERIFY=true"
+        create: true
+        mode: "0644"
+      when:
+        - "vault_tls_enable | bool()"
+        - "vault_tls_skip_verify | bool()"
+
+    - name: "vault | add vault_tls_server_name environment variable in bashrc"
+      lineinfile:
+        path: "{{ vault_home }}/.bashrc"
+        line: "export VAULT_TLS_SERVER_NAME={{ vault_tls_server_name }}"
+        create: true
+        mode: "0644"
+      when:
+        - "vault_tls_enable | bool()"
+        - "vault_tls_server_name is defined and vault_tls_server_name"
   become: true
   become_user: "{{ vault_user }}"

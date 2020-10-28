@@ -96,8 +96,8 @@ vault_default_lease_ttl: "768h"
 vault_tls_enable: true
 vault_tls_copy_keys: true
 vault_protocol: "{{ (vault_tls_enable | bool()) | ternary('https', 'http') }}"
-vault_tls_validate_certs_api_check: true
 
+vault_tls_validate_certs_api_check: true
 vault_tls_disable_client_certs: false
 vault_tls_require_and_verify_client_cert: false
 
@@ -108,6 +108,8 @@ vault_tls_src_files_remote: false
 vault_tls_ca_file: "ca.crt"
 vault_tls_cert_file: "server.crt"
 vault_tls_key_file: "server.key"
+vault_tls_skip_verify: false
+vault_tls_server_name: ""
 vault_tls_cipher_suites: ""
 vault_tls_min_version: "tls12"
 vault_tls_prefer_server_cipher_suites: "false"

@@ -111,3 +111,4 @@
 - name: "vault | current vault api status"
   debug:
     msg: "Vault is {{ vault_http_status[check_result.status | string()] }}"
+  when: "not ansible_check_mode"

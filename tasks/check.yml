@@ -1,25 +1,27 @@
 ---
 
-- name: "vault | check vault installation"
-  shell: "type vault"
-  environment:
-    PATH: "{{ vault_bin_path }}:{{ ansible_env.PATH }}"
-  register: "is_vault_installed"
-  changed_when: false
-  ignore_errors: true
-  tags: "skip_ansible_lint"
+- block:
+    - name: "vault | check vault installation"
+      shell: "type vault"
+      environment:
+        PATH: "{{ vault_bin_path }}:{{ ansible_env.PATH }}"
+      register: "is_vault_installed"
+      changed_when: false
+      ignore_errors: true
+      tags: "skip_ansible_lint"
 
-- name: "vault | get installed vault version"
-  set_fact:
-    installed_vault_version: "{{ lookup('pipe', 'vault --version').split()[1] }}"
-  when: "is_vault_installed.rc == 0"
+    - name: "vault | get installed vault version"
+      set_fact:
+        installed_vault_version: "{{ lookup('pipe', 'vault --version').split()[1] }}"
+      when: "is_vault_installed.rc == 0"
 
-- name: "vault | compute if installation is required"
-  set_fact:
-    installation_required: "{{
-      is_vault_installed is failed or
-      (
-        installed_vault_version.strip('v') is version(vault_version, '!=') and
-        vault_upgrade_inplace | bool()
-      )
-    }}"
+    - name: "vault | compute if installation is required"
+      set_fact:
+        installation_required: "{{
+          is_vault_installed is failed or
+          (
+            installed_vault_version.strip('v') is version(vault_version, '!=') and
+            vault_upgrade_inplace | bool()
+          )
+        }}"
+  check_mode: false

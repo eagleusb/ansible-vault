@@ -29,3 +29,4 @@
       dest: "{{ vault_tls_config_path }}/{{ vault_tls_ca_file }}"
       mode: "0440"
   when: "vault_tls_copy_keys | bool()"
+  no_log: true

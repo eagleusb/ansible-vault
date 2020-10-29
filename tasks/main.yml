@@ -94,7 +94,7 @@
   vars:
     vault_addr: "{{ (vault_address == '0.0.0.0') | ternary('127.0.0.1', vault_address) }}"
   uri:
-    validate_certs: "{{ vault_tls_validate_certs_api_check | bool() }}"
+    validate_certs: "{{ vault_tls_api.validate_certs | bool() }}"
     url:
       "{{ vault_protocol }}://\
       {{ vault_hostname | default(vault_addr, true) }}:\

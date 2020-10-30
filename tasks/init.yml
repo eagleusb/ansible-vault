@@ -19,10 +19,12 @@
         -address={{ vault_first_server_addr }}
         {%- if vault_tls_enable | bool() %}
         -ca-cert={{ vault_tls_path.dst_path }}/{{ vault_tls_files.ca_file }}
-        {%- elif vault_tls_sni.skip_verify | bool() and not vault_tls_sni.server_name %}
+        {%- if vault_tls_sni.skip_verify %}
         -tls-skip-verify
-        {%- elif vault_tls_sni.server_name and not vault_tls_sni.skip_verify | bool() %}
+        {%- endif %}
+        {%- if vault_tls_sni.server_name %}
         -tls-server-name={{ vault_tls_sni.server_name }}
+        {%- endif %}
         {%- endif %}
       args:
         executable: "/bin/bash"
@@ -39,10 +41,12 @@
         -address={{ vault_first_server_addr }}
         {%- if vault_tls_enable | bool() %}
         -ca-cert={{ vault_tls_path.dst_path }}/{{ vault_tls_files.ca_file }}
-        {%- elif vault_tls_sni.skip_verify | bool() %}
+        {%- if vault_tls_sni.skip_verify %}
         -tls-skip-verify
-        {%- elif vault_tls_sni.server_name and not vault_tls_sni.skip_verify | bool() %}
+        {%- endif %}
+        {%- if vault_tls_sni.server_name %}
         -tls-server-name={{ vault_tls_sni.server_name }}
+        {%- endif %}
         {%- endif %}
       args:
         executable: "/bin/bash"

@@ -29,7 +29,7 @@
     - name: "vault | add vault_tls_sni.server_name environment variable in bashrc"
       lineinfile:
         path: "{{ vault_home }}/.bashrc"
-        line: "export vault_tls_sni.server_name={{ vault_tls_sni.server_name }}"
+        line: "export VAULT_TLS_SERVER_NAME={{ vault_tls_sni.server_name }}"
         create: true
         mode: "0644"
       when:

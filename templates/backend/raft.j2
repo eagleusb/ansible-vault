@@ -3,16 +3,23 @@ storage "raft" {
   node_id = "{{ vault_raft_node_id }}"
 
 {% for node in groups[vault_group_name] | difference([inventory_hostname]) %}
+
+{% if (vault_tls_enable | bool()) and hostvars[node]['vault_tls_sni']['server_name'] %}
+  {% set leaderAddr = hostvars[node]['vault_tls_sni']['server_name'] %}
+{% else %}
+  {% set leaderAddr = hostvars[node]['ansible_'+vault_iface]['ipv4']['address'] %}
+{% endif %}
+
 {% if (vault_tls_enable | bool()) %}
   retry_join {
-    leader_api_addr = "{{ vault_protocol }}://{{ hostvars[node]['ansible_'+vault_iface]['ipv4']['address'] }}:{{ vault_port.api }}"
+    leader_api_addr = "{{ vault_protocol }}://{{ leaderAddr | mandatory() }}:{{ vault_port.api }}"
     leader_ca_cert_file = "{{ vault_tls_path.dst_path }}/{{ vault_tls_files.ca_file }}"
     leader_client_cert_file = "{{ vault_tls_path.dst_path }}/{{ vault_tls_files.cert_file }}"
     leader_client_key_file = "{{ vault_tls_path.dst_path }}/{{ vault_tls_files.key_file }}"
   }
 {% else %}
   retry_join {
-    leader_api_addr = "{{ vault_protocol }}://{{ hostvars[node]['ansible_'+vault_iface]['ipv4']['address'] }}:{{ vault_port.api }}"
+    leader_api_addr = "{{ vault_protocol }}://{{ leaderAddr | mandatory() }}:{{ vault_port.api }}"
   }
 {% endif %}
 {% endfor %}

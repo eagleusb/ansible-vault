@@ -69,26 +69,31 @@ vault_main_configuration_template: "vault_main_configuration.hcl.j2"
 vault_ui: "{{ lookup('env', 'VAULT_UI') | default(true, true) }}"
 
 # descr: network parameters
-vault_iface: "{{ lookup('env','VAULT_IFACE') | default(ansible_default_ipv4.interface, true) }}"
+vault_iface: "{{ ansible_default_ipv4.interface }}"
 vault_address: "{{ hostvars[inventory_hostname]['ansible_'+vault_iface]['ipv4']['address'] }}"
-vault_port: 8200
+vault_port:
+  api: 8200
+  cluster: 8201
+
+# desr: api parameters
+vault_api_addr:
+  "{{ vault_protocol }}://\
+  {{ vault_address }}:\
+  {{ vault_port.api }}"
+
+# descr: clustering parameters
+vault_cluster_disable: false
+vault_cluster_addr:
+  "{{ vault_protocol }}://\
+  {{ vault_address }}:\
+  {{ vault_port.cluster }}"
 
 # descr: initialization support
 vault_init: false
 vault_init_key_shares: 5
 vault_init_key_threshold: 3
 
-# descr: clustering parameters
-vault_cluster_disable: false
-vault_cluster_address:
-  "{{ hostvars[inventory_hostname]['ansible_'+vault_iface]['ipv4']['address'] }}:\
-  {{ (vault_port | int()) + 1 }}"
-vault_cluster_addr: "{{ vault_protocol }}://{{ vault_cluster_address }}"
-vault_api_addr:
-  "{{ vault_protocol }}://\
-  {{ vault_redirect_address | default(hostvars[inventory_hostname]['ansible_'+vault_iface]['ipv4']['address']) }}:\
-  {{ vault_port }}"
-
+# descr: misc
 vault_max_lease_ttl: "768h"
 vault_default_lease_ttl: "768h"
 
@@ -136,14 +141,6 @@ vault_backend_config:
 
 # descr: raft backend parameters
 vault_raft_node_id: "{{ ansible_machine_id | hash('sha1') }}"
-vault_raft_retry_join: []
-  # - leader_api_addr:
-  #   leader_ca_cert_file:
-  #   leader_client_cert_file:
-  #   leader_client_key_file:
-  #   leader_ca_cert:
-  #   leader_client_cert:
-  #   leader_client_key:
 
 # descr: consul backend parameters
 vault_consul: "127.0.0.1:8500"

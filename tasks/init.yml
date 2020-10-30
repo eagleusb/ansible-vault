@@ -11,7 +11,7 @@
         vault_first_server_addr:
           "{{ vault_protocol }}://\
           {{ vault_address | mandatory() }}:\
-          {{ vault_port }}"
+          {{ vault_port.api }}"
 
     - name: "vault | check the init status"
       shell: >-

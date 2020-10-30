@@ -4,7 +4,7 @@
     - name: "vault | add vault_addr environment variable in bashrc"
       lineinfile:
         path: "{{ vault_home }}/.bashrc"
-        line: "export VAULT_ADDR='{{ vault_protocol }}://{{ vault_address }}:{{ vault_port }}'"
+        line: "export VAULT_ADDR='{{ vault_protocol }}://{{ vault_address }}:{{ vault_port.api }}'"
         create: true
         mode: "0644"
 
@@ -26,7 +26,7 @@
         - "vault_tls_enable | bool()"
         - "vault_tls_sni.skip_verify | bool()"
 
-    - name: "vault | add vault_tls_sni.server_name environment variable in bashrc"
+    - name: "vault | add vault_tls_server_name environment variable in bashrc"
       lineinfile:
         path: "{{ vault_home }}/.bashrc"
         line: "export VAULT_TLS_SERVER_NAME={{ vault_tls_sni.server_name }}"

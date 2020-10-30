@@ -98,15 +98,15 @@
     url:
       "{{ vault_protocol }}://\
       {{ vault_hostname | default(vault_addr, true) }}:\
-      {{ vault_port }}/v1/sys/health"
+      {{ vault_port.api }}/v1/sys/health"
     method: "GET"
     status_code: "200, 429, 472, 473, 501, 503"
     body_format: "json"
-  register: "check_result"
-  retries: 6
+  retries: 3
+  delay: 15
   until: "check_result is succeeded"
-  delay: 10
   changed_when: false
+  register: "check_result"
 
 - name: "vault | current vault api status"
   debug:

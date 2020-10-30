@@ -9,8 +9,8 @@ api_addr = "{{ vault_api_addr }}"
 plugin_directory = "{{ vault_plugin_path }}"
 
 listener "tcp" {
-  address = "{{ vault_address }}:{{ vault_port }}"
-  cluster_address = "{{ vault_cluster_address }}"
+  address = "{{ vault_address }}:{{ vault_port.api }}"
+  cluster_address = "{{ vault_cluster_addr }}"
   {% if (vault_tls_enable | bool()) -%}
   tls_cert_file = "{{ vault_tls_path.dst_path }}/{{ vault_tls_files.cert_file }}"
   tls_key_file = "{{ vault_tls_path.dst_path }}/{{ vault_tls_files.key_file }}"

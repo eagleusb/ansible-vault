@@ -77,15 +77,13 @@ vault_port:
 
 # desr: api parameters
 vault_api_addr:
-  "{{ vault_protocol }}://\
-  {{ vault_address }}:\
+  "{{ vault_address }}:\
   {{ vault_port.api }}"
 
 # descr: clustering parameters
 vault_cluster_disable: false
 vault_cluster_addr:
-  "{{ vault_protocol }}://\
-  {{ vault_address }}:\
+  "{{ vault_address }}:\
   {{ vault_port.cluster }}"
 
 # descr: initialization support

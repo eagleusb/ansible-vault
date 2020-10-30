@@ -3,8 +3,8 @@ max_lease_ttl = "{{ vault_max_lease_ttl }}"
 default_lease_ttl = "{{ vault_default_lease_ttl }}"
 
 disable_clustering = "{{ vault_cluster_disable }}"
-cluster_addr = "{{ vault_cluster_addr }}"
-api_addr = "{{ vault_api_addr }}"
+cluster_addr = "{{ vault_protocol }}://{{ vault_cluster_addr }}"
+api_addr = "{{ vault_protocol }}://{{ vault_api_addr }}"
 
 plugin_directory = "{{ vault_plugin_path }}"
 
